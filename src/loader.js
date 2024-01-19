@@ -3,6 +3,7 @@ import path from "node:path";
 import { Collection } from "discord.js";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
+import { useMainPlayer } from "discord-player";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -31,12 +32,19 @@ export const loadModules = async (client) => {
   const eventFoldersPath = path.join(__dirname, "events");
   const eventFolders = readdirSync(eventFoldersPath);
 
+  const player = useMainPlayer()
+
   for (const folder of eventFolders) {
     const eventsPath = path.join(eventFoldersPath, folder);
     const eventFiles = readdirSync(eventsPath).filter((file) =>  file.endsWith(".js"));
     for (const file of eventFiles) {
       const filePath = path.join(eventsPath, file);
       const { event } = await import(filePath);
+      
+      if (folder === "player") {
+        player.events.on(event.name, (...args) => event.execute(...args))
+      }
+
       if (event.once) {
         client.once(event.name, (...args) => event.execute(...args));
       } else {
