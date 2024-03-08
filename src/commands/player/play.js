@@ -14,14 +14,10 @@ export const command = {
         .setRequired(true)
     ),
   async execute(interaction) {
-
     const textChannel = await interaction.guild.channels.fetch(textChannelId);
     const player = useMainPlayer();
-    // TEMPORARY
-    const channel = await interaction.guild.channels.fetch(
-      "1192598451024834671"
-    );
-    // const channel = interaction.member.voice.channel;
+
+    const channel = interaction.member.voice.channel;
 
     if (!channel)
       return interaction.reply("You are not connected to a voice channel!"); // make sure we have a voice channel
@@ -43,12 +39,12 @@ export const command = {
         user: interaction.member.nickname,
         commandName: "/play",
       };
-      queue.metadata.textChannel = textChannel
+      queue.metadata.textChannel = textChannel;
       await interaction.editReply("Track Queued ✅");
       return await interaction.deleteReply();
     } catch (e) {
       // let's return error if something failed
-      console.log(e)
+      console.log(e);
       return interaction.followUp(`Something went wrong: ${e}`);
     }
   },
