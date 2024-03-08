@@ -1,10 +1,6 @@
 import { useQueue } from "discord-player";
-import { SlashCommandBuilder } from "discord.js";
 
 export const command = {
-  data: new SlashCommandBuilder()
-    .setName("resume")
-    .setDescription("Resumes current paused audio"),
   async execute(interaction) {
     const queue = useQueue(interaction.guild.id);
     if (!queue)
@@ -12,19 +8,23 @@ export const command = {
         content: `No music currently playing ${interaction.member}... try again ? ❌`,
         ephemeral: true,
       });
+
+    const currentVolume = queue.node.volume;
+
+    let newVolume = currentVolume - 15;
+
+    if (newVolume < 0) newVolume = 0;
     queue.metadata.lastCommand = {
       user: interaction.member.nickname,
-      commandName: "/resume",
+      commandName: "/volume",
     };
 
     try {
-      queue.node.setPaused(!queue.node.isPaused());
-    await interaction.reply("Track Resumed ▶️");
-    return await interaction.deleteReply();
+      queue.node.setVolume(newVolume);
+      return interaction.deferUpdate();
     } catch (e) {
-      console.log(e)
+      console.log(e);
       return interaction.followUp(`Something went wrong: ${e}`);
     }
-    
   },
 };

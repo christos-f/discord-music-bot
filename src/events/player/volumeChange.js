@@ -1,9 +1,9 @@
 import { createNowPlayingEmbed } from "../../embeds/nowPlaying.js";
 
 export const event = {
-  name: "playerStart",
-  async execute(queue, track) {
+  name: "volumeChange",
+  async execute(queue) {
     createNowPlayingEmbed(queue)
-    console.log(`Started playing **${track.title}**!`);
+    console.log(`Volume Changed`);
   },
 };

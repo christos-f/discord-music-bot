@@ -36,7 +36,7 @@ export const loadModules = async (client) => {
 
   for (const folder of eventFolders) {
     const eventsPath = path.join(eventFoldersPath, folder);
-    const eventFiles = readdirSync(eventsPath).filter((file) =>  file.endsWith(".js"));
+    const eventFiles = readdirSync(eventsPath).filter((file) => file.endsWith(".js"));
     for (const file of eventFiles) {
       const filePath = path.join(eventsPath, file);
       const { event } = await import(filePath);

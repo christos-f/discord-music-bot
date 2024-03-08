@@ -11,8 +11,8 @@ export const command = {
   async execute(interaction) {
     const queue = useQueue(interaction.guild.id);
     if (!queue)
-      return inter.editReply({
-        content: `No music currently playing ${inter.member}... try again ? ❌`,
+      return interaction.editReply({
+        content: `No music currently playing ${interaction.member}... try again ? ❌`,
         ephemeral: true,
       });
 
@@ -20,7 +20,18 @@ export const command = {
 
     if (volume > 100) volume = 100;
     if (volume < 0) volume = 0;
-    console.log(volume)
-    queue.node.setVolume(volume);
+
+    queue.metadata.lastCommand = {
+      user: interaction.member.nickname,
+      commandName: "/volume",
+    };
+    try {
+      queue.node.setVolume(volume);
+      await interaction.reply("Volume Changed 🔈🔉");
+      return await interaction.deleteReply();
+    } catch (e) {
+      console.log(e);
+      return interaction.followUp(`Something went wrong: ${e}`);
+    }
   },
 };

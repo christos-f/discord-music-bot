@@ -1,6 +1,6 @@
 import { useQueue } from "discord-player";
 import { SlashCommandBuilder } from "discord.js";
-
+import { welcomeEmbeds } from "../../embeds/help.js";
 export const command = {
   data: new SlashCommandBuilder()
     .setName("stop")
@@ -8,10 +8,21 @@ export const command = {
   async execute(interaction) {
     const queue = useQueue(interaction.guild.id);
     if (!queue)
-      return inter.editReply({
-        content: `No music currently playing ${inter.member}... try again ? ❌`,
+      return interaction.editReply({
+        content: `No music currently playing ${interaction.member}... try again ? ❌`,
         ephemeral: true,
       });
-    queue.delete
+    queue.metadata.lastCommand = {
+      user: interaction.member.nickname,
+      commandName: "/stop",
+    };
+    try {
+      queue.delete();
+      await interaction.reply("Playback stopped and queue deleted 🤚🚫");
+      return await interaction.deleteReply();
+    } catch (e) {
+      console.log(e);
+      return interaction.followUp(`Something went wrong: ${e}`);
+    }
   },
 };

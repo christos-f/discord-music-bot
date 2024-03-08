@@ -8,10 +8,22 @@ export const command = {
   async execute(interaction) {
     const queue = useQueue(interaction.guild.id);
     if (!queue)
-      return inter.editReply({
-        content: `No music currently playing ${inter.member}... try again ? ❌`,
+      return interaction.editReply({
+        content: `No music currently playing ${interaction.member}... try again ? ❌`,
         ephemeral: true,
       });
-    queue.node.skip()
+    queue.metadata.lastCommand = {
+      user: interaction.member.nickname,
+      commandName: "/skip",
+    };
+
+    try {
+      queue.node.skip();
+      await interaction.reply("Track Skipped ⏭️");
+      return await interaction.deleteReply();
+    } catch (e) {
+      console.log(e);
+      return interaction.followUp(`Something went wrong: ${e}`);
+    }
   },
 };
