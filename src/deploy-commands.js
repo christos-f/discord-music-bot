@@ -1,11 +1,13 @@
 import { REST, Routes } from 'discord.js';
 import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
-import "dotenv/config.js"
+import "dotenv/config.js";
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url)); 
+console.log("started")
+console.log(process.env.TOKEN)
 
 const token = process.env.TOKEN
 const clientId = process.env.CLIENT_ID
